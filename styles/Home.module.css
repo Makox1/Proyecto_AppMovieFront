@@ -1,0 +1,25 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+  
+  .title {
+    text-align: center;
+    color: #ffffff; /* Cambia el color del texto a blanco */
+  }
+  
+  .movieList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .movieItem {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    text-align: center;
+    color: #000000; /* Agrega esta línea para cambiar el color de los elementos de película a negro */
+  }
+  
