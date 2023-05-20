@@ -11,21 +11,23 @@ const Home = () => {
   ];
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Películas</title>
-      </Head>
+    <div className={styles.mainContainer}>
+      <div className={styles.container}>
+        <Head>
+          <title>Películas</title>
+        </Head>
 
-      <h1 className={styles.title}>
-        Bienvenido a la página de películas{' '}
-      </h1>
+        <h1 className={styles.title}>
+          Bienvenido a la página de películas{' '}
+        </h1>
 
-      <div className={styles.movieList}>
-        {movies.map((movie) => (
-          <div key={movie.id} className={styles.movieItem}>
-            {movie.title}
-          </div>
-        ))}
+        <div className={styles.movieList}>
+          {movies.map((movie) => (
+            <div key={movie.id} className={styles.movieItem}>
+              {movie.title}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

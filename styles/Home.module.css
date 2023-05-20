@@ -1,3 +1,11 @@
+.mainContainer {
+  background-image: url('../public/img/fondoHome.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh; /* Esto asegura que tu contenedor siempre tenga al menos la altura de la ventana del navegador */
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;

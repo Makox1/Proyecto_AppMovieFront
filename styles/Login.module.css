@@ -1,3 +1,11 @@
+.mainContainer {
+  background-image: url('../public/img/fondoLoginRegister.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh; /* Esto asegura que tu contenedor siempre tenga al menos la altura de la ventana del navegador */
+}
+
 .container {
     max-width: 400px;
     margin: 0 auto;
@@ -58,5 +66,12 @@
     color: #0070f3;
     text-decoration: none;
   }
+
+  .registerButton {
+    color: #0070f3;
+    margin-left: 60px; /* Ajusta el margen izquierdo según tus necesidades */
+    /* Otros estilos de diseño para el botón de registro */
+  }
+  
   
   

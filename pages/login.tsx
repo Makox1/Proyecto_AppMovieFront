@@ -60,6 +60,7 @@ const Login = () => {
 
   return (
     <ApolloProvider client={client}>
+      <div className={styles.mainContainer}>
       <div className={styles.container}>
         <h1 className={styles.title}>Iniciar sesión</h1>
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -95,7 +96,13 @@ const Login = () => {
           <Link className={styles.link} href="/" passHref>
             Volver al inicio
           </Link>
+          <button className={styles.registerButton}>
+            <Link className={styles.link} href="/register" passHref>
+              Registrarme
+            </Link>
+          </button>
         </div>
+      </div>
       </div>
       </ApolloProvider>
   );
