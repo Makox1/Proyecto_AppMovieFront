@@ -73,5 +73,12 @@
     /* Otros estilos de diseño para el botón de registro */
   }
   
-  
+  .successMessage {
+    background-color: #ff4d4f; /* Cambia el color de fondo a rojo */
+    color: #ffffff; /* Cambia el color del texto a blanco */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
   
