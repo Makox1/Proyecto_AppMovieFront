@@ -1,77 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import Navbar from '../components/Navbar';
 
 const Home = () => {
-  const [isLogin, setIsLogin] = useState(false);
-  const [nameUser, setNameUser] = useState('');
+  const movies = [
+    { id: 1, title: 'Pelicula 1' },
+    { id: 2, title: 'Pelicula 2' },
+    { id: 3, title: 'Pelicula 3' },
+    // Agrega más películas aquí...
+  ];
 
-  useEffect(() => {
-    const storedValue = localStorage.getItem('isLogin');
-    const storedName = localStorage.getItem('nameUser');
-    if (storedValue === 'true') {
-      setIsLogin(true);
-      setNameUser(storedName ?? '');
-    }
-  }, []);
+  return (
+<div> <Navbar />
+  <div className={styles.mainContainer}>
+      <div className={styles.container}>
+        <Head>
+          <title>Películas</title>
+        </Head>
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLogin');
-    localStorage.removeItem('nameUser');
-    setIsLogin(false);
-    setNameUser('');
-  };
+        <h1 className={styles.title}>
+          Bienvenido a la página de películas{' '}
+        </h1>
 
-  if (isLogin) {
-    const movies = [
-      { id: 1, title: 'Pelicula 1' },
-      { id: 2, title: nameUser },
-      { id: 3, title: <a href="/">Cerrar Sesión</a>, onClick: handleLogout },
-      // Agrega más películas aquí...
-    ];
-    return (
-      <div className={styles.mainContainer}>
-        <div className={styles.container}>
-          <Head>
-            <title>Películas</title>
-          </Head>
-
-          <h1 className={styles.title}>Bienvenido a la página de películas</h1>
-
-          <div className={styles.movieList}>
-            {movies.map((movie) => (
-              <div key={movie.id} className={styles.movieItem} onClick={movie.onClick}>
-                {movie.title}
-              </div>
-            ))}
-          </div>
+       <div className={styles.movieList}>
+          {movies.map((movie) => (
+            <div key={movie.id} className={styles.movieItem}>
+              {movie.title}
+            </div>
+          ))}
         </div>
       </div>
-    );
-  } else {
-    const movies = [
-      { id: 1, title: <a href="/login">Iniciar sesión</a> },
-    ];
-    return (
-      <div className={styles.mainContainer}>
-        <div className={styles.container}>
-          <Head>
-            <title>Películas</title>
-          </Head>
-
-          <h1 className={styles.title}>Bienvenido a la página de películas</h1>
-
-          <div className={styles.movieList}>
-            {movies.map((movie) => (
-              <div key={movie.id} className={styles.movieItem}>
-                {movie.title}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+    </div>
+ </div>
+  );
 };
 
 export default Home;

@@ -3,6 +3,7 @@ import styles from '../styles/Login.module.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloProvider, useQuery, gql } from '@apollo/client';
 
 const httpLink = createHttpLink({
@@ -73,6 +74,7 @@ const Login = () => {
   }, [isLog]);
 
   return (
+    <div> <Navbar />
     <ApolloProvider client={client}>
       <div className={styles.mainContainer}>
         <div className={styles.container}>
@@ -119,6 +121,7 @@ const Login = () => {
         </div>
       </div>
     </ApolloProvider>
+    </div>
   );
 };
 

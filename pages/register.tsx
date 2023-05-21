@@ -3,6 +3,7 @@ import styles from '../styles/Login.module.css';
 import Link from 'next/link';
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloProvider, useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/router'; 
+import Navbar from '../components/Navbar';
 import React, { useEffect } from 'react';
 
 const httpLink = createHttpLink({
@@ -76,7 +77,7 @@ const Register = () => {
       // Puedes manejar los errores de creación del usuario aquí, como mostrar un mensaje de error.
     }
   };
-  
+
   useEffect(() => {
     const storedValue = localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
@@ -90,6 +91,7 @@ const Register = () => {
 
   if (registrationSuccess) {
     return (
+      <div> <Navbar />
       <ApolloProvider client={client}>
         <div className={styles.mainContainer}>
           <div className={styles.container}>
@@ -108,10 +110,12 @@ const Register = () => {
           </div>
         </div>
       </ApolloProvider>
+      </div>
     );
   }
 
   return (
+    <div> <Navbar />
     <ApolloProvider client={client}>
       <div className={styles.mainContainer}>
         <div className={styles.container}>
@@ -170,6 +174,7 @@ const Register = () => {
         </div>
       </div>
     </ApolloProvider>
+    </div>
   );
 };
 
