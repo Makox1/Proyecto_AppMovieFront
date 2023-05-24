@@ -28,6 +28,9 @@ const Navbar: React.FC = () => {
           <li>
             <a href="/">Home</a>
           </li>
+          <li>
+            <a href="/listas">Mis listas</a>
+          </li>
         </ul>
       </div>
       <div className={styles.navbarRight}>
@@ -35,7 +38,7 @@ const Navbar: React.FC = () => {
           {isUserLoggedIn ? (
             <>
               <li className={styles.username}>
-                <a href="/perfil">{userName}</a>
+                Hola, {userName}!
               </li>
               <li className={styles.logout} onClick={logout}>
                 <a href="/">Cerrar sesión</a>

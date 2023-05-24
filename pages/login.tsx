@@ -30,6 +30,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLog, setIsLogin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
   const { loading, error, data } = useQuery(USER_QUERY, {
     variables: { email, password },
@@ -46,14 +47,19 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!email || !password) {
+      setErrorMessage('* Por favor ingresa todos los campos.');
+      return;
+    }
+
     try {
       if (data && data.user) {
         console.log('Usuario autenticado:', data.user);
         var isLogin: boolean = true;
         var nameUser = data.user.name;
-        localStorage.setItem("isLogin", String(isLogin));
-        localStorage.setItem("nameUser", nameUser);
-        window.location.href = 'http://localhost:3000'
+        localStorage.setItem('isLogin', String(isLogin));
+        localStorage.setItem('nameUser', nameUser);
+        window.location.href = 'http://localhost:3000';
       } else {
         console.log('Error de autenticación: No se encontró el usuario');
       }
@@ -61,6 +67,7 @@ const Login = () => {
       console.error(error);
     }
   };
+
 
   useEffect(() => {
     const storedValue = localStorage.getItem("isLogin");
@@ -108,6 +115,7 @@ const Login = () => {
               Iniciar sesión
             </button>
           </form>
+          {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
           <div className={styles.buttonContainer}>
             <Link className={styles.link} href="/" passHref>
               Volver al inicio
