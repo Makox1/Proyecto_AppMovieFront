@@ -54,7 +54,6 @@ const Login = () => {
 
     try {
       if (data && data.user) {
-        console.log('Usuario autenticado:', data.user);
         var isLogin: boolean = true;
         var nameUser = data.user.name;
         localStorage.setItem('isLogin', String(isLogin));
