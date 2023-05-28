@@ -79,7 +79,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    const storedValue = localStorage.getItem("isLogin");
+    const storedValue =  sessionStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
   }, []);
 

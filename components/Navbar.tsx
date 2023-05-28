@@ -6,8 +6,8 @@ const Navbar: React.FC = () => {
   const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
-    const storedValue = localStorage.getItem("isLogin");
-    const storedUserName = localStorage.getItem("nameUser");
+    const storedValue =  localStorage.getItem("isLogin");
+    const storedUserName =  localStorage.getItem("nameUser");
     if (storedValue === "true" && storedUserName) {
       setIsUserLoggedIn(true);
       setUserName(storedUserName || "");
@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
             <a href="/">Home</a>
           </li>
           <li>
-            <a href="/listas">Mis listas</a>
+            <a href="/listas">My playlists</a>
           </li>
         </ul>
       </div>
@@ -38,10 +38,10 @@ const Navbar: React.FC = () => {
           {isUserLoggedIn ? (
             <>
               <li className={styles.username}>
-                Hola, {userName}!
+                Hi, {userName}!
               </li>
               <li className={styles.logout} onClick={logout}>
-                <a href="/">Cerrar sesión</a>
+                <a href="/">Log out</a>
               </li>
             </>
           ) : (

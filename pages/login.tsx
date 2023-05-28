@@ -56,8 +56,10 @@ const Login = () => {
       if (data && data.user) {
         var isLogin: boolean = true;
         var nameUser = data.user.name;
+        var idUser = data.user.id;
         localStorage.setItem('isLogin', String(isLogin));
         localStorage.setItem('nameUser', nameUser);
+        localStorage.setItem('idUser', idUser);
         window.location.href = 'http://localhost:3000';
       } else {
         console.log('Error de autenticación: No se encontró el usuario');
@@ -69,7 +71,7 @@ const Login = () => {
 
 
   useEffect(() => {
-    const storedValue = localStorage.getItem("isLogin");
+    const storedValue =  localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
   }, []);
 
