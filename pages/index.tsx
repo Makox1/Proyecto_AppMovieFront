@@ -367,9 +367,38 @@ const MoviesComponent: React.FC = () => {
 
     fetchMoviesData();
   }, []);
+  const fetchCastById = async (id: string) => {
+    const client = new ApolloClient({
+      uri: 'http://localhost:4000/graphql',
+      cache: new InMemoryCache(),
+    });
+
+    const query = gql`
+      query($id: Int!) {
+        getAllCastsById(id: $id) {
+          idCast
+          actor
+          character
+        }
+      }
+    `;
+
+    try {
+      const response = await client.query({
+        query: query,
+        variables: { id },
+      });
+
+      return response.data.getAllCastsById;
+    } catch (error) {
+      console.error('Error fetching cast data:', error);
+      return [];
+    }
+  };
 
   const handleMovieClick = async (movie: Movie) => {
-    setSelectedMovie(movie);
+    const cast = await fetchCastById(movie.id);
+    setSelectedMovie({ ...movie, cast });
   };
 
   const handleDialogClose = () => {
