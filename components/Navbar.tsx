@@ -28,9 +28,11 @@ const Navbar: React.FC = () => {
           <li>
             <a href="/">Home</a>
           </li>
-          <li>
-            <a href="/listas">My playlists</a>
-          </li>
+          {isUserLoggedIn ? (
+            <li>
+              <a href="/listas">My playlists</a>
+            </li>
+          ) : null}
         </ul>
       </div>
       <div className={styles.navbarRight}>

@@ -79,7 +79,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    const storedValue =  sessionStorage.getItem("isLogin");
+    const storedValue =  localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
   }, []);
 
@@ -95,15 +95,15 @@ const Register = () => {
       <ApolloProvider client={client}>
         <div className={styles.mainContainer}>
           <div className={styles.container}>
-          <div className={styles.successMessage}>¡Registro exitoso!</div>
+          <div className={styles.successMessage}>Successful registration!</div>
 
             <div className={styles.buttonContainer}>
               <Link className={styles.link} href="/" passHref>
-                Volver al inicio
+                Back to home
               </Link>
               <button className={styles.registerButton}>
                 <Link className={styles.link} href="/login" passHref>
-                  Iniciar Sesión
+                  Log in
                 </Link>
               </button>
             </div>
@@ -119,7 +119,7 @@ const Register = () => {
     <ApolloProvider client={client}>
       <div className={styles.mainContainer}>
         <div className={styles.container}>
-          <h1 className={styles.title}>Registro</h1>
+          <h1 className={styles.title}>Sign Up</h1>
           <form onSubmit={handleRegister} className={styles.form}>
             <div className={styles.formGroup}>
               <label htmlFor="email" className={styles.label}>
@@ -147,7 +147,7 @@ const Register = () => {
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="password" className={styles.label}>
-                Contraseña:
+                Password:
               </label>
               <input
                 type="password"
@@ -158,16 +158,16 @@ const Register = () => {
               />
             </div>
             <button type="submit" className={styles.button}>
-              Registrarme
+              Sign Up
             </button>
           </form>
           <div className={styles.buttonContainer}>
               <Link className={styles.link} href="/" passHref>
-                Volver al inicio
+                Back to home
               </Link>
               <button className={styles.registerButton}>
                 <Link className={styles.link} href="/login" passHref>
-                  Iniciar Sesión
+                  Log in
                 </Link>
               </button>
             </div>

@@ -86,7 +86,7 @@ const Login = () => {
     <ApolloProvider client={client}>
       <div className={styles.mainContainer}>
         <div className={styles.container}>
-          <h1 className={styles.title}>Iniciar sesión</h1>
+          <h1 className={styles.title}>Log in</h1>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGroup}>
               <label htmlFor="email" className={styles.label}>
@@ -102,7 +102,7 @@ const Login = () => {
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="password" className={styles.label}>
-                Contraseña:
+                Password:
               </label>
               <input
                 type="password"
@@ -113,17 +113,17 @@ const Login = () => {
               />
             </div>
             <button type="submit" className={styles.button}>
-              Iniciar sesión
+              Log in
             </button>
           </form>
           {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
           <div className={styles.buttonContainer}>
             <Link className={styles.link} href="/" passHref>
-              Volver al inicio
+              Back to home
             </Link>
             <button className={styles.registerButton}>
               <Link className={styles.link} href="/register" passHref>
-                Registrarme
+                Sign up
               </Link>
             </button>
           </div>

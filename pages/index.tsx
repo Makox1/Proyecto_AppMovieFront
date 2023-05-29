@@ -1,37 +1,8 @@
 import { useEffect, useState } from 'react';
-import {
-  ApolloClient,
-  InMemoryCache,
-  gql
-} from '@apollo/client';
-import axios from 'axios';
+import {ApolloClient,InMemoryCache,gql} from '@apollo/client';
 import Navbar from '../components/Navbar';
-import {
-  Container,
-  Typography,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Paper,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  FormControl,
-  Select,
-  MenuItem,
-  InputLabel
-} from '@mui/material';
+import {Container,Typography,Grid,Dialog,DialogTitle,DialogContent,DialogActions,Button,Paper,Box,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TextField,FormControl,Select,MenuItem, InputLabel} from '@mui/material';
 import '../styles/Home.module.css';
-
-import noImage from '../public/img/No-Image.svg'; // Ruta de la imagen de reemplazo
 
 interface CastMember {
   idCast: string;
@@ -64,7 +35,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isAddedToList, setIsAddedToList] = useState(false);
-  const [isMovieAdded, setIsMovieAdded] = useState(false);
+
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [playlistName, setPlaylistName] = useState('');
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -123,18 +94,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
   }, []);
 
 
-  const handleAddToList = () => {
-    if (!isUserLoggedIn) {
-      return;
-    }
-  
-    if (isAddedToList) {
-      return;
-    }
-  
-    setShowCreatePlaylist(true);
-  };
-
   const handleAddToExistingPlaylist = async (playlistId: string) => {
     const playlist = existingPlaylists.find((p) => p.idPlaylist === playlistId);
     if (playlist && movie) {
@@ -163,11 +122,9 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
   
         const { data } = await response.json();
         const updatedPlaylist = data.updatePlaylist;
-  
         playlist.movies = updatedPlaylist.movies;
         setExistingPlaylists([...existingPlaylists]);
         localStorage.setItem('playlists', JSON.stringify(existingPlaylists));
-  
         console.log(`Movie added to playlist ${playlistId}:`, movie.original_title);
         setIsAddedToList(true);
         setAddedToListMessage('Added to list');
@@ -229,30 +186,20 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
             `,
           }),
         });
-  
         const { data: dataAddMovie } = await responseAddMovie.json();
         const updatedPlaylist = dataAddMovie.updatePlaylist;
-  
- 
         newPlaylist.movies = updatedPlaylist.movies;
         setExistingPlaylists([...existingPlaylists]);
-  
-
         localStorage.setItem('playlists', JSON.stringify(existingPlaylists));
-  
         console.log(`Movie added to new playlist ${newPlaylist.idPlaylist}:`, movie.original_title);
         setIsAddedToList(true);
         setAddedToListMessage('Added to list');
         setShowCreatePlaylist(false);
-  
       } catch (error) {
         console.error('Error creating playlist:', error);
       }
     }
   };
-
-
-
 
   const handleCloseCreatePlaylist = () => {
     setShowCreatePlaylist(false);
@@ -429,15 +376,6 @@ const MoviesComponent: React.FC = () => {
     setSelectedMovie(null);
   };
 
-  const handleAddToExistingPlaylist = (playlistId: string) => {
-    const playlist = playlists.find((p) => p.idPlaylist === playlistId);
-    if (playlist && selectedMovie) {
-      playlist.movies.push(selectedMovie);
-      setPlaylists([...playlists]);
-      localStorage.setItem('playlists', JSON.stringify(playlists));
-      console.log(`Movie added to playlist ${playlistId}:`, selectedMovie.original_title);
-    }
-  };
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
