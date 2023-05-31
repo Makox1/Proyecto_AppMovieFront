@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react';
-import {ApolloClient,InMemoryCache,gql} from '@apollo/client';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 import Navbar from '../components/Navbar';
-import {Container,Typography,Grid,Dialog,DialogTitle,DialogContent,DialogActions,Button,Paper,Box,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TextField,FormControl,Select,MenuItem, InputLabel} from '@mui/material';
+import {
+  Container,Typography,Grid,Dialog,DialogTitle,DialogContent,DialogActions,Button,Paper,Box,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TextField,FormControl,Select,MenuItem,InputLabel} from '@mui/material';
 import '../styles/Home.module.css';
-
-interface CastMember {
-  idCast: string;
-  id: string;
-  actor: string;
-  character: string;
-}
 
 interface Movie {
   id: string;
-  original_title: string;
+  title: string;
   overview: string;
   poster_path: string;
-  cast?: CastMember[]; // Hacer que la propiedad cast sea opcional con el operador de "?"
+}
+
+interface Cast {
+  idCast: string;
+  nameActor: string;
+  character: string;
 }
 
 interface MovieDetailProps {
@@ -35,6 +34,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
 
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isAddedToList, setIsAddedToList] = useState(false);
+  const [movieCast, setMovieCast] = useState<Cast[]>([]);
 
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [playlistName, setPlaylistName] = useState('');
@@ -49,7 +49,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
 
   const fetchExistingPlaylists = async () => {
     const userId = localStorage.getItem('idUser');
-  
+
     try {
       const response = await fetch('http://localhost:4000/graphql', {
         method: 'POST',
@@ -64,7 +64,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
                 name
                 movies {
                   id
-                  original_title
+                  title
                   poster_path
                 }
               }
@@ -72,7 +72,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
           `,
         }),
       });
-  
+
       const { data } = await response.json();
       setExistingPlaylists(data.Playlist);
     } catch (error) {
@@ -80,11 +80,10 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
       setExistingPlaylists([]);
     }
   };
-  
+
   useEffect(() => {
     fetchExistingPlaylists();
   }, []);
-
 
   useEffect(() => {
     const storedPlaylists = localStorage.getItem('playlists');
@@ -92,7 +91,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
       setPlaylists(JSON.parse(storedPlaylists));
     }
   }, []);
-
 
   const handleAddToExistingPlaylist = async (playlistId: string) => {
     const playlist = existingPlaylists.find((p) => p.idPlaylist === playlistId);
@@ -106,26 +104,28 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
           body: JSON.stringify({
             query: `
               mutation {
-                updatePlaylist(idPlaylist: ${playlistId}, idMovie: ${movie.id})
-                {
+                addMoviePlaylist(playlistInput: {
+                  idPlaylist: ${playlistId},
+                  id: ${movie.id}
+                }) {
                   idPlaylist
                   name
                   movies {
                     id
-                    original_title
+                    title
                   }
                 }
               }
             `,
           }),
         });
-  
+
         const { data } = await response.json();
-        const updatedPlaylist = data.updatePlaylist;
+        const updatedPlaylist = data.addMoviePlaylist;
         playlist.movies = updatedPlaylist.movies;
         setExistingPlaylists([...existingPlaylists]);
         localStorage.setItem('playlists', JSON.stringify(existingPlaylists));
-        console.log(`Movie added to playlist ${playlistId}:`, movie.original_title);
+        console.log(`Movie added to playlist ${playlistId}:`, movie.title);
         setIsAddedToList(true);
         setAddedToListMessage('Added to list');
       } catch (error) {
@@ -133,7 +133,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
       }
     }
   };
-  
+
   const handleCreatePlaylist = async () => {
     if (playlistName && movie) {
       try {
@@ -157,13 +157,13 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
             `,
           }),
         });
-  
+
         const { data } = await response.json();
         const newPlaylist = data.createPlaylist;
-  
+
         setExistingPlaylists([...existingPlaylists, newPlaylist]);
         console.log('New playlist created:', newPlaylist.name);
-  
+
         // Here we will add the movie to the newly created playlist
         const responseAddMovie = await fetch('http://localhost:4000/graphql', {
           method: 'POST',
@@ -173,13 +173,15 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
           body: JSON.stringify({
             query: `
               mutation {
-                updatePlaylist(idPlaylist: ${newPlaylist.idPlaylist}, idMovie: ${movie.id})
-                {
+                addMoviePlaylist(playlistInput: {
+                  idPlaylist: ${newPlaylist.idPlaylist},
+                  id: ${movie.id}
+                }) {
                   idPlaylist
                   name
                   movies {
                     id
-                    original_title
+                    title
                   }
                 }
               }
@@ -187,11 +189,11 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
           }),
         });
         const { data: dataAddMovie } = await responseAddMovie.json();
-        const updatedPlaylist = dataAddMovie.updatePlaylist;
+        const updatedPlaylist = dataAddMovie.addMoviePlaylist;
         newPlaylist.movies = updatedPlaylist.movies;
         setExistingPlaylists([...existingPlaylists]);
         localStorage.setItem('playlists', JSON.stringify(existingPlaylists));
-        console.log(`Movie added to new playlist ${newPlaylist.idPlaylist}:`, movie.original_title);
+        console.log(`Movie added to new playlist ${newPlaylist.idPlaylist}:`, movie.title);
         setIsAddedToList(true);
         setAddedToListMessage('Added to list');
         setShowCreatePlaylist(false);
@@ -205,21 +207,53 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
     setShowCreatePlaylist(false);
   };
 
+  const fetchMovieCast = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query {
+              Cast(idMovie: ${movie.id}) {
+                nameActor
+                character
+              }
+            }
+          `,
+        }),
+      });
+
+      const { data } = await response.json();
+      const castData = data.Cast;
+      setMovieCast(castData);
+    } catch (error) {
+      console.error('Error fetching movie cast:', error);
+      setMovieCast([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchMovieCast();
+  }, []);
+
   return (
     <Dialog open onClose={onClose} aria-labelledby="movie-detail-dialog">
-      <DialogTitle>{movie.original_title}</DialogTitle>
+      <DialogTitle>{movie.title}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             {movie.poster_path ? (
               <img
                 src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-                alt={movie.original_title}
+                alt={movie.title}
                 style={{ width: '100%', height: 'auto' }}
               />
             ) : (
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" // Ruta relativa a la imagen de reemplazo en tu proyecto
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
                 alt="No Image"
                 style={{ width: '100%', height: 'auto' }}
               />
@@ -230,32 +264,27 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
               {movie.overview}
             </Typography>
           </Grid>
-          {Array.isArray(movie.cast) && movie.cast.length > 0 && (
-            <Grid item xs={12}>
-              <Typography variant="h6" style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                Cast:
-              </Typography>
-              <TableContainer component={Paper} style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Actor name</TableCell>
-                      <TableCell>Character</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {movie.cast.map((actor) => (
-                      <TableRow key={actor.idCast}>
-                        <TableCell>{actor.actor}</TableCell>
-                        <TableCell>{actor.character}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          )}
         </Grid>
+        {movieCast.length > 0 && (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name Actor</TableCell>
+                  <TableCell>Character</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {movieCast.map((cast) => (
+                  <TableRow key={cast.idCast}>
+                    <TableCell>{cast.nameActor}</TableCell>
+                    <TableCell>{cast.character}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </DialogContent>
       <DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
         {isUserLoggedIn && !isAddedToList && (
@@ -285,7 +314,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
                     <Select
                       value=""
                       onChange={(e) => handleAddToExistingPlaylist(e.target.value as string)}
-                      style={{ minWidth: '200px' }} // Ajusta la anchura del botón de selección
+                      style={{ minWidth: '200px' }}
                     >
                       <MenuItem value="" disabled>
                         Select Playlist
@@ -329,7 +358,7 @@ const MoviesComponent: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const moviesPerPage = 18;
-  const visiblePageNumbers = 5; // Number of visible page numbers
+  const visiblePageNumbers = 5;
 
   useEffect(() => {
     async function fetchMoviesData() {
@@ -342,7 +371,7 @@ const MoviesComponent: React.FC = () => {
         query {
           Movies {
             id
-            original_title
+            title
             overview
             poster_path
           }
@@ -367,44 +396,14 @@ const MoviesComponent: React.FC = () => {
 
     fetchMoviesData();
   }, []);
-  const fetchCastById = async (id: string) => {
-    const client = new ApolloClient({
-      uri: 'http://localhost:4000/graphql',
-      cache: new InMemoryCache(),
-    });
-
-    const query = gql`
-      query($id: Int!) {
-        getAllCastsById(id: $id) {
-          idCast
-          actor
-          character
-        }
-      }
-    `;
-
-    try {
-      const response = await client.query({
-        query: query,
-        variables: { id },
-      });
-
-      return response.data.getAllCastsById;
-    } catch (error) {
-      console.error('Error fetching cast data:', error);
-      return [];
-    }
-  };
 
   const handleMovieClick = async (movie: Movie) => {
-    const cast = await fetchCastById(movie.id);
-    setSelectedMovie({ ...movie, cast });
+    setSelectedMovie({ ...movie });
   };
 
   const handleDialogClose = () => {
     setSelectedMovie(null);
   };
-
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
@@ -471,18 +470,18 @@ const MoviesComponent: React.FC = () => {
                 {movie.poster_path ? (
                   <img
                     src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-                    alt={movie.original_title}
+                    alt={movie.title}
                     style={{ width: '100%', height: 'auto' }}
                   />
                 ) : (
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" // Ruta relativa a la imagen de reemplazo en tu proyecto
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
                     alt="No Image"
                     style={{ width: '100%', height: 'auto' }}
                   />
                 )}
                 <Typography variant="subtitle1" align="center" gutterBottom>
-                  {movie.original_title}
+                  {movie.title}
                 </Typography>
               </div>
             </Grid>

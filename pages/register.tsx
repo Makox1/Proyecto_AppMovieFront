@@ -61,7 +61,7 @@ const Register = () => {
         variables: { userInput },
       });
 
-      console.log('Usuario creado:', data.createUser);
+      
 
       // Mostrar el mensaje de registro exitoso
       setRegistrationSuccess(true);
@@ -79,16 +79,19 @@ const Register = () => {
   };
 
   useEffect(() => {
-    const storedValue =  localStorage.getItem("isLogin");
+    const storedValue = localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
+    setIsInitialized(true);
   }, []);
-
+  
+  const [isInitialized, setIsInitialized] = useState(false);
+  
   useEffect(() => {
-    if (isLog) {
+    if (isInitialized && isLog) {
       router.push("/");
     }
-  }, [isLog]);
-
+  }, [isInitialized, isLog]);
+  
   if (registrationSuccess) {
     return (
       <div> <Navbar />

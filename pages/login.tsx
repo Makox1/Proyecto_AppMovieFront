@@ -71,15 +71,18 @@ const Login = () => {
 
 
   useEffect(() => {
-    const storedValue =  localStorage.getItem("isLogin");
+    const storedValue = localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
+    setIsInitialized(true);
   }, []);
-
+  
+  const [isInitialized, setIsInitialized] = useState(false);
+  
   useEffect(() => {
-    if (isLog) {
+    if (isInitialized && isLog) {
       router.push("/");
     }
-  }, [isLog]);
+  }, [isInitialized, isLog]);
 
   return (
     <div> <Navbar />
