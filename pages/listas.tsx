@@ -1,20 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,Grid
-} from "@mui/material";
-import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper } from "@mui/material";
-
+import {Container,Typography,List,ListItem,ListItemText,Box,Button,Dialog,DialogTitle,DialogContent,DialogActions,TextField, Grid,Table,TableHead,TableRow,TableCell,TableBody,TableContainer,Paper,} from "@mui/material";
 import Navbar from "../components/Navbar";
 import { useRouter } from "next/router";
 
@@ -35,7 +20,6 @@ type Movie = {
   overview: string;
   poster_path: string;
 };
-
 
 const MyPage: React.FC = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -157,7 +141,9 @@ const MyPage: React.FC = () => {
       });
 
       if (response.ok) {
-        setPlaylists(playlists.filter((playlist) => playlist.idPlaylist !== playlistId));
+        setPlaylists(
+          playlists.filter((playlist) => playlist.idPlaylist !== playlistId)
+        );
         console.log("Playlist deleted:", playlistId);
       } else {
         console.error("Error deleting playlist");
@@ -170,8 +156,9 @@ const MyPage: React.FC = () => {
   const [showUpdatePlaylist, setShowUpdatePlaylist] = useState(false);
   const [updatePlaylistId, setUpdatePlaylistId] = useState<number | null>(null);
   const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [selectedMovieCast, setSelectedMovieCast] = useState<{ nameActor: string; character: string }[] | null>(null);
-
+  const [selectedMovieCast, setSelectedMovieCast] = useState<
+    { nameActor: string; character: string }[] | null
+  >(null);
 
   const handleUpdatePlaylist = async () => {
     const userId = localStorage.getItem("idUser");
@@ -238,7 +225,7 @@ const MyPage: React.FC = () => {
           `,
         }),
       });
-  
+
       const { data } = await response.json();
       const castData = data.Cast;
       setSelectedMovieCast(castData);
@@ -246,11 +233,12 @@ const MyPage: React.FC = () => {
       console.error("Error fetching movie cast:", error);
     }
   };
-  
-  
+
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [isMovieDialogOpen, setMovieDialogOpen] = useState(false);
-  const [selectedMovieData, setSelectedMovieData] = useState<Movie | null>(null);
+  const [selectedMovieData, setSelectedMovieData] = useState<Movie | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -286,7 +274,10 @@ const MyPage: React.FC = () => {
     }
   }, [selectedMovie]);
 
-  const handleRemoveMovieFromPlaylist = async (playlistId: number, movieId: number) => {
+  const handleRemoveMovieFromPlaylist = async (
+    playlistId: number,
+    movieId: number
+  ) => {
     try {
       const response = await fetch("http://localhost:4000/graphql", {
         method: "POST",
@@ -304,7 +295,7 @@ const MyPage: React.FC = () => {
           `,
         }),
       });
-  
+
       if (response.ok) {
         // Actualizar la lista de películas en la playlist
         setPlaylists((prevPlaylists) => {
@@ -326,15 +317,26 @@ const MyPage: React.FC = () => {
       console.error("Error removing movie from playlist:", error);
     }
   };
-  
+
   return (
     <div>
       <Navbar />
-
-      <Button variant="outlined" onClick={() => setShowCreatePlaylist(true)} style={{ backgroundColor: 'white' }}>
-        Create New Playlist
-      </Button>
-
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: "20px",
+          marginRight: "40px",
+        }}
+      >
+        <Button
+          variant="outlined"
+          onClick={() => setShowCreatePlaylist(true)}
+          style={{ backgroundColor: "white" }}
+        >
+          Create New Playlist
+        </Button>
+      </div>
       <Dialog open={showCreatePlaylist} onClose={handleCancelCreatePlaylist}>
         <DialogTitle>Create New Playlist</DialogTitle>
         <DialogContent>
@@ -353,7 +355,10 @@ const MyPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={showUpdatePlaylist} onClose={() => setShowUpdatePlaylist(false)}>
+      <Dialog
+        open={showUpdatePlaylist}
+        onClose={() => setShowUpdatePlaylist(false)}
+      >
         <DialogTitle>Update Playlist Name</DialogTitle>
         <DialogContent>
           <TextField
@@ -371,33 +376,43 @@ const MyPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isMovieDialogOpen} onClose={() => setMovieDialogOpen(false)} aria-labelledby="movie-detail-dialog">
+      <Dialog
+        open={isMovieDialogOpen}
+        onClose={() => setMovieDialogOpen(false)}
+        aria-labelledby="movie-detail-dialog"
+      >
         <DialogTitle>{selectedMovie?.title}</DialogTitle>
-          <DialogContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                {selectedMovie?.poster_path ? (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500/${selectedMovie?.poster_path}`}
-                    alt={selectedMovie?.title}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                ) : (
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
-                    alt="No Image"
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                )}
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1" style={{ fontSize: "1.2rem", marginBottom: "1rem" }}>
-                  {selectedMovieData?.overview}
-                </Typography>
-                <Typography variant="subtitle1" style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-                  Cast:
-                </Typography>
-                <TableContainer component={Paper}>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              {selectedMovie?.poster_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w500/${selectedMovie?.poster_path}`}
+                  alt={selectedMovie?.title}
+                  style={{ width: "100%", height: "auto" }}
+                />
+              ) : (
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
+                  alt="No Image"
+                  style={{ width: "100%", height: "auto" }}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography
+                variant="body1"
+                style={{ fontSize: "1.2rem", marginBottom: "1rem" }}
+              >
+                {selectedMovieData?.overview}
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                style={{ fontWeight: "bold", marginBottom: "0.5rem" }}
+              >
+                Cast:
+              </Typography>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -414,23 +429,50 @@ const MyPage: React.FC = () => {
                     ))}
                   </TableBody>
                 </Table>
-                </TableContainer>
-              </Grid>
+              </TableContainer>
             </Grid>
-            </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setMovieDialogOpen(false)}>Close</Button>
-          </DialogActions>
-        </Dialog>
-
+          </Grid>
+        </DialogContent>
+        <DialogActions
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <div>
+            {/* New "Remove" button */}
+            {playlists.map(
+              (playlist) =>
+                playlist.movies?.find(
+                  (movie) => movie.id === selectedMovie?.id
+                ) && (
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      handleRemoveMovieFromPlaylist(
+                        playlist.idPlaylist,
+                        selectedMovie?.id as number
+                      );
+                      setMovieDialogOpen(false);
+                    }}
+                    style={{ backgroundColor: "white" }}
+                  >
+                    Remove for the list
+                  </Button>
+                )
+            )}
+          </div>
+          <Button onClick={() => setMovieDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
       <Container maxWidth="xl">
         {playlists.map((playlist) => (
           <div key={playlist.idPlaylist}>
             <Typography variant="h6" component="h2" gutterBottom>
               {playlist.name}
-              <Button variant="outlined" onClick={() => handleDeletePlaylist(playlist.idPlaylist)} style={{ backgroundColor: 'white' , marginLeft: "10px" }} >
+              <Button
+                variant="outlined"
+                onClick={() => handleDeletePlaylist(playlist.idPlaylist)}
+                style={{ backgroundColor: "white", marginLeft: "10px" }}
+              >
                 Delete
-                
               </Button>
               <Button
                 variant="outlined"
@@ -438,7 +480,7 @@ const MyPage: React.FC = () => {
                   setUpdatePlaylistId(playlist.idPlaylist);
                   setShowUpdatePlaylist(true);
                 }}
-                style={{ backgroundColor: 'white', marginLeft: "10px" }}
+                style={{ backgroundColor: "white", marginLeft: "10px" }}
               >
                 Edit
               </Button>
@@ -447,7 +489,11 @@ const MyPage: React.FC = () => {
               {playlist.movies?.map((movie) => (
                 <ListItem
                   key={movie.id}
-                  style={{ flexBasis: "16.666%", maxWidth: "16.666%", marginBottom: "20px" }}
+                  style={{
+                    flexBasis: "16.666%",
+                    maxWidth: "16.666%",
+                    marginBottom: "20px",
+                  }}
                 >
                   <div style={{ textAlign: "center" }}>
                     {/* Contenido de la película */}
@@ -467,15 +513,6 @@ const MyPage: React.FC = () => {
                       )}
                       <ListItemText primary={movie.title} />
                     </div>
-
-                    {/* Botón de eliminar película */}
-                    <Button 
-                      variant="outlined"
-                      onClick={() => handleRemoveMovieFromPlaylist(playlist.idPlaylist, movie.id)}
-                      style={{ backgroundColor: 'white' }}
-                    >
-                      Remove
-                    </Button>
                   </div>
                 </ListItem>
               ))}
