@@ -64,6 +64,8 @@ const Login = () => {
         window.location.href = 'http://localhost:3000';
       } else {
         console.log('Error de autenticación: No se encontró el usuario');
+        setErrorMessage('Error de autenticación: No se encontró el usuario');
+        return;
       }
     } catch (error) {
       console.error(error);
