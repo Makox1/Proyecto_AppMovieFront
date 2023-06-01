@@ -14,6 +14,7 @@ const Navbar: React.FC = () => {
     }
   }, []);
 
+  // Permite al usuario cerrar sesion.
   const logout = () => {
     localStorage.removeItem("isLogin");
     localStorage.removeItem("nameUser");
@@ -21,6 +22,7 @@ const Navbar: React.FC = () => {
     setUserName("");
   };
 
+  // Retorna el contenido del componente. Si el usuario esta iniciado, se mostrara su nombre y la opcion de cerrar sesion, ademas de poder acceder a su lista de reproduccion.
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarLeft}>

@@ -6,15 +6,16 @@ import { useRouter } from 'next/router';
 import Navbar from '../components/Navbar';
 import React, { useEffect } from 'react';
 
+// Permite la conexion por un enlace a GraphQL
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql', // Reemplaza con la URL correcta de tu servidor GraphQL
+  uri: 'http://localhost:4000/graphql',
 });
 
 const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
 });
-
+// Query para crear un nuevo usuario.
 const CREATE_USER_MUTATION = gql`
   mutation CreateUser($userInput: CreateUserInput!) {
     createUser(userInput: $userInput) {
@@ -71,13 +72,13 @@ const Register = () => {
       setName('');
       setPassword('');
 
-      // Puedes realizar acciones adicionales después de crear el usuario, como mostrar un mensaje de éxito o redirigir a otra página.
     } catch (error) {
       console.error('Error al crear el usuario:', error);
-      // Puedes manejar los errores de creación del usuario aquí, como mostrar un mensaje de error.
+    
     }
   };
 
+  // Si el usuario ya esta logeado, no deberia porque poder registrar uno nuevo y es redirigido a la pagina principal.
   useEffect(() => {
     const storedValue = localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
@@ -91,7 +92,8 @@ const Register = () => {
       router.push("/");
     }
   }, [isInitialized, isLog]);
-  
+
+  // Si el registro fue exitoso, mostrara este mensaje.
   if (registrationSuccess) {
     return (
       <div> <Navbar />
@@ -116,7 +118,7 @@ const Register = () => {
       </div>
     );
   }
-
+  // Retorna el contenido de la pagina.
   return (
     <div> <Navbar />
     <ApolloProvider client={client}>

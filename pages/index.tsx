@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import {Container,Typography,Grid,Dialog,DialogTitle,DialogContent,DialogActions,Button,Paper,Box,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TextField,FormControl,Select,MenuItem,InputLabel,} from "@mui/material";
 import "../styles/Home.module.css";
 
+// Interfaces, clases creadas para ser usadas en el codigo.
 interface Movie {
   id: string;
   title: string;
@@ -28,9 +29,11 @@ interface Playlist {
   movies: Movie[];
 }
 
+//Contiene la informacion una vez abierto el popup.
 const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
-  if (!movie) return null;
 
+  if (!movie) return null;
+  //Componentes y su set, son usadas para almacenar datos.
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isAddedToList, setIsAddedToList] = useState(false);
   const [movieCast, setMovieCast] = useState<Cast[]>([]);
@@ -40,11 +43,13 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
   const [existingPlaylists, setExistingPlaylists] = useState<Playlist[]>([]);
   const [addedToListMessage, setAddedToListMessage] = useState("");
 
+  //Si el usuario esta logeado, se permite ver opciones para añadir peliculas a lista.
   useEffect(() => {
     const isLogin = localStorage.getItem("isLogin");
     setIsUserLoggedIn(isLogin === "true");
   }, []);
 
+  //Se hace uso de una query que permite saber si el usuario logeado, tiene o no playlist creadas.
   const fetchExistingPlaylists = async () => {
     const userId = localStorage.getItem("idUser");
 
@@ -90,6 +95,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
     }
   }, []);
 
+  // Permite al usuario añadir una pelicula a una playlist existente.
   const handleAddToExistingPlaylist = async (playlistId: string) => {
     const playlist = existingPlaylists.find((p) => p.idPlaylist === playlistId);
     if (playlist && movie) {
@@ -132,6 +138,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
     }
   };
 
+  // Permite crear al usuario una nueva playlist y añade una pelicula a esta.
   const handleCreatePlaylist = async () => {
     if (playlistName && movie) {
       try {
@@ -162,7 +169,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
         setExistingPlaylists([...existingPlaylists, newPlaylist]);
         console.log("New playlist created:", newPlaylist.name);
 
-        // Here we will add the movie to the newly created playlist
         const responseAddMovie = await fetch("http://localhost:4000/graphql", {
           method: "POST",
           headers: {
@@ -208,6 +214,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
     setShowCreatePlaylist(false);
   };
 
+  // Permite mostrar los datos del Reparto en las peliculas.
   const fetchMovieCast = async () => {
     try {
       const response = await fetch("http://localhost:4000/graphql", {
@@ -240,6 +247,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
     fetchMovieCast();
   }, []);
 
+  //Retorna la informacion en el Popup
   return (
     <Dialog open onClose={onClose} aria-labelledby="movie-detail-dialog">
       <DialogTitle>{movie.title}</DialogTitle>
@@ -369,6 +377,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
   );
 };
 
+// Contiene la informacion de las peliculas como portada y titulo. Estas son mostradas en la pagina principal.
 const MoviesComponent: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
@@ -378,6 +387,7 @@ const MoviesComponent: React.FC = () => {
   const moviesPerPage = 18;
   const visiblePageNumbers = 5;
 
+  // Con esta query, se obtienen los datos de las peliculas.
   useEffect(() => {
     async function fetchMoviesData() {
       const client = new ApolloClient({
@@ -458,7 +468,7 @@ const MoviesComponent: React.FC = () => {
         </Button>
       );
     }
-
+    // Botonera que permite el cambio de pagina entre las peliculas.
     return (
       <Box
         display="flex"
@@ -488,6 +498,7 @@ const MoviesComponent: React.FC = () => {
   const endIndex = startIndex + moviesPerPage;
   const visibleMovies = movies.slice(startIndex, endIndex);
 
+  // Retorna el container de las peliculas.
   return (
     <div className="mainContainer">
       <Navbar />
@@ -512,10 +523,10 @@ const MoviesComponent: React.FC = () => {
                     style={{ width: "100%", height: "auto" }}
                   />
                 )}
-                <Typography variant="subtitle1" align="center" gutterBottom>
-                  {movie.title}
-                </Typography>
               </div>
+              <Typography variant="subtitle1" align="center" gutterBottom>
+                    {movie.title}
+                  </Typography>
             </Grid>
           ))}
         </Grid>
