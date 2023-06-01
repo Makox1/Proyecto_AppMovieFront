@@ -3,6 +3,7 @@ import {Container,Typography,List,ListItem,ListItemText,Box,Button,Dialog,Dialog
 import Navbar from "../components/Navbar";
 import { useRouter } from "next/router";
 
+// contiene las clases que son usadas en el codigo.
 type Playlist = {
   idPlaylist: number;
   name: string;
@@ -26,6 +27,7 @@ const MyPage: React.FC = () => {
   const [isLog, setIsLogin] = useState(false);
   const router = useRouter();
 
+  //Si el usuario no esta iniciado, se regresa al home.
   useEffect(() => {
     const storedValue = localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
@@ -40,6 +42,7 @@ const MyPage: React.FC = () => {
     }
   }, [isInitialized, isLog]);
 
+  //Permite a traves de una query, obtener los datos de las playlist del usuario.
   useEffect(() => {
     const userId = localStorage.getItem("idUser");
 
@@ -77,6 +80,7 @@ const MyPage: React.FC = () => {
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [playlistName, setPlaylistName] = useState("");
 
+  // Permite crear una nueva playlist, sin tener que añadir una pelicula a esta.
   const handleCreatePlaylist = async () => {
     if (playlistName) {
       try {
@@ -119,6 +123,7 @@ const MyPage: React.FC = () => {
     setShowCreatePlaylist(false);
   };
 
+  // Permite borrar una playlist.
   const handleDeletePlaylist = async (playlistId: number) => {
     const userId = localStorage.getItem("idUser");
 
@@ -160,6 +165,7 @@ const MyPage: React.FC = () => {
     { nameActor: string; character: string }[] | null
   >(null);
 
+  // Permite al usuario cambiar el nombre de una playlist.
   const handleUpdatePlaylist = async () => {
     const userId = localStorage.getItem("idUser");
 
@@ -204,6 +210,7 @@ const MyPage: React.FC = () => {
     }
   };
 
+  // Permite obtener los datos de Reparto en las peliculas.
   const handleMovieClick = async (movie: Movie) => {
     setSelectedMovie(movie);
     setMovieDialogOpen(true);
@@ -240,6 +247,7 @@ const MyPage: React.FC = () => {
     null
   );
 
+  // Permite obtener los datos de una pelicula seleccionada (Hacer clic en esta).
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
@@ -274,6 +282,7 @@ const MyPage: React.FC = () => {
     }
   }, [selectedMovie]);
 
+  // Remueve una pelicula de la playlist
   const handleRemoveMovieFromPlaylist = async (
     playlistId: number,
     movieId: number
@@ -318,6 +327,7 @@ const MyPage: React.FC = () => {
     }
   };
 
+  //Devuelve el contenido de la pagina.
   return (
     <div>
       <Navbar />

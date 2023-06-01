@@ -6,15 +6,16 @@ import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloProvider, useQuery, gql } from '@apollo/client';
 
+// Permite acceder a la direccion del backend en GraphQL
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql', // Reemplaza con la URL correcta de tu servidor GraphQL
+  uri: 'http://localhost:4000/graphql',
 });
 
 const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
 });
-
+//Query para poder iniciar sesion.
 const USER_QUERY = gql`
   query User($email: String!, $password: String!) {
     user(email: $email, password: $password) {
@@ -51,7 +52,7 @@ const Login = () => {
       setErrorMessage('* Por favor ingresa todos los campos.');
       return;
     }
-
+    // Si el inicio de sesion fue exitoso, entonces se guardan estos parametros en localStorage.
     try {
       if (data && data.user) {
         var isLogin: boolean = true;
@@ -69,7 +70,7 @@ const Login = () => {
     }
   };
 
-
+  // Si el usuario ya esta iniciado, se regresa a la pagina principal.
   useEffect(() => {
     const storedValue = localStorage.getItem("isLogin");
     setIsLogin(storedValue === "true");
@@ -83,7 +84,7 @@ const Login = () => {
       router.push("/");
     }
   }, [isInitialized, isLog]);
-
+  // Retorna el contenido de la pagina.
   return (
     <div> <Navbar />
     <ApolloProvider client={client}>
