@@ -15,7 +15,6 @@
 body {
   color: rgb(var(--foreground-rgb));
   background-image: url('../public/img/fondo3.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size: auto;
   background-position: center center;
 }
