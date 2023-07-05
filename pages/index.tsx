@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import Navbar from "../components/Navbar";
-import {Container,Typography,Grid,Dialog,DialogTitle,DialogContent,DialogActions,Button,Paper,Box,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,TextField,FormControl,Select,MenuItem,InputLabel,} from "@mui/material";
+import {Container, Typography, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button, Paper, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, FormControl, Select, MenuItem, InputLabel} from "@mui/material";
 import "../styles/Home.module.css";
 
 // Interfaces, clases creadas para ser usadas en el codigo.
@@ -31,7 +31,6 @@ interface Playlist {
 
 //Contiene la informacion una vez abierto el popup.
 const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
-
   if (!movie) return null;
   //Componentes y su set, son usadas para almacenar datos.
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
@@ -380,11 +379,13 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
 // Contiene la informacion de las peliculas como portada y titulo. Estas son mostradas en la pagina principal.
 const MoviesComponent: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [searchedMovies, setSearchedMovies] = useState<Movie[]>([]); // Estado para almacenar las películas filtradas por la búsqueda
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const moviesPerPage = 18;
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para almacenar el valor de búsqueda
+  const moviesPerPage = 12;
   const visiblePageNumbers = 5;
 
   // Con esta query, se obtienen los datos de las peliculas.
@@ -413,12 +414,14 @@ const MoviesComponent: React.FC = () => {
 
         const movieData = response.data.Movies;
         setMovies(movieData);
+        setSearchedMovies(movieData);
 
         const totalPagesCount = Math.ceil(movieData.length / moviesPerPage);
         setTotalPages(totalPagesCount);
       } catch (error) {
         console.error("Error fetching movie data:", error);
         setMovies([]);
+        setSearchedMovies([]);
       }
     }
 
@@ -431,6 +434,32 @@ const MoviesComponent: React.FC = () => {
 
   const handleDialogClose = () => {
     setSelectedMovie(null);
+  };
+
+  const handleSearch = () => {
+    // Filtrar las películas por el valor de búsqueda en la lista completa de películas
+    const filteredMovies = movies.filter((movie) =>
+      movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Actualizar las películas filtradas y el número total de páginas
+    setSearchedMovies(filteredMovies);
+    setTotalPages(Math.ceil(filteredMovies.length / moviesPerPage));
+    setCurrentPage(1);
+  };
+
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleFirstPageClick = () => {
+    setCurrentPage(1);
+  };
+
+  const handleLastPageClick = () => {
+    setCurrentPage(totalPages);
   };
 
   const handlePageClick = (page: number) => {
@@ -478,6 +507,9 @@ const MoviesComponent: React.FC = () => {
       >
         <Paper elevation={3} sx={{ borderRadius: "10px" }}>
           <Box display="flex" alignItems="center" p={1}>
+            <Button onClick={handleFirstPageClick} disabled={currentPage === 1}>
+              First
+            </Button>
             <Button onClick={handlePrevPageClick} disabled={currentPage === 1}>
               Previous
             </Button>
@@ -488,6 +520,12 @@ const MoviesComponent: React.FC = () => {
             >
               Next
             </Button>
+            <Button
+              onClick={handleLastPageClick}
+              disabled={currentPage === totalPages}
+            >
+              Last
+            </Button>
           </Box>
         </Paper>
       </Box>
@@ -496,13 +534,29 @@ const MoviesComponent: React.FC = () => {
 
   const startIndex = (currentPage - 1) * moviesPerPage;
   const endIndex = startIndex + moviesPerPage;
-  const visibleMovies = movies.slice(startIndex, endIndex);
+  const visibleMovies = searchedMovies.slice(startIndex, endIndex);
 
   // Retorna el container de las peliculas.
   return (
     <div className="mainContainer">
       <Navbar />
       <Container maxWidth="xl">
+        <Box
+          display="inline-flex"
+          alignItems="center"
+          my={2}
+          bgcolor="white"
+          p={1}
+          borderRadius="10px"
+          fontSize={14}
+        >
+          <TextField
+            label="Search Movie"
+            value={searchQuery}
+            onKeyUp={handleSearch}
+            onChange={handleSearchInputChange}
+          />
+        </Box>
         <Grid container spacing={2}>
           {visibleMovies.map((movie) => (
             <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -525,8 +579,8 @@ const MoviesComponent: React.FC = () => {
                 )}
               </div>
               <Typography variant="subtitle1" align="center" gutterBottom>
-                    {movie.title}
-                  </Typography>
+                {movie.title}
+              </Typography>
             </Grid>
           ))}
         </Grid>
